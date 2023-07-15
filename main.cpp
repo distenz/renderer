@@ -1,6 +1,8 @@
 #include "tgaimage.h"
+#include <cmath>
 #include <cstdlib>
 #include <iostream>
+#include <valarray>
 
 void drawLine(int,int,int,int,const TGAColor&,TGAImage&);
 
@@ -33,19 +35,36 @@ int main() {
  */
 void drawLine(int x0, int y0, int x1, int y1, const TGAColor& color, TGAImage& image) {
 
-    int ranges[2] {x1 - x0, y1 - y0};
-    int longerRange = ranges[(int)(ranges[1] > ranges[0])];
+    int start[2] {x0, y0};
+    int deltas[2] {x1 - x0, y1 - y0};
 
-    for(int i = longerRange; i >= 0; i--) {
+    bool isRotated {deltas[1] > deltas[0]};
 
-        int currentX,currentY;
-        float progress = (float)i/longerRange;
+    int stepAxis = (int)isRotated;
+    int stepDelta {deltas[(int)stepAxis]};
 
-        currentX = x0 + ranges[0] * progress;
-        currentY = y0 + ranges[1] * progress;
+    int valueAxis = (int)(!stepAxis);
+    int valueDelta = deltas[(int)valueAxis];
 
-        std::cout << currentX << ';' << currentY << '\n';
+    float steepness = (float)valueDelta/stepDelta;
+    float error = 0;
+    int value = start[valueAxis];
 
-        image.set(currentX,currentY,color);
+    for(int i = 0; i <= stepDelta; i++) {
+
+        int x = !isRotated * i + isRotated * value;
+        int y = isRotated * i + !isRotated * value; 
+        
+        std::cout << x << ';' << y << '\n';
+
+        image.set(x,y,color);
+
+        error += steepness;
+        if (error >= 0.5) {
+            ++value;
+            error = 0.0;
+        }
+
+        std::cout << error << '\n';
     }
 }
