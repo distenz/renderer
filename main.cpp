@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <iostream>
 
+#define ARTIFACT_NAME "artifact.tga"
 void drawLine(int,int,int,int,const TGAColor&,TGAImage&);
 
 const TGAColor red{255,0,0,255};
@@ -24,7 +25,7 @@ int main() {
     image.set(999,999, red);
 
     image.flip_vertically();
-    image.write_tga_file("image.tga");
+    image.write_tga_file(ARTIFACT_NAME);
 
     return 0;
 }
@@ -51,8 +52,6 @@ void drawLine(int x0, int y0, int x1, int y1, const TGAColor& color, TGAImage& i
         int x = !isRotated * i + isRotated * value;
         int y = isRotated * i + !isRotated * value; 
         
-        //std::cout << x << ';' << y << '\n';
-
         image.set(x,y,color);
 
         error += steepness;
@@ -60,7 +59,5 @@ void drawLine(int x0, int y0, int x1, int y1, const TGAColor& color, TGAImage& i
             ++value;
             error = 0.0;
         }
-
-        //std::cout << error << '\n';
     }
 }

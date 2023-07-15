@@ -5,6 +5,7 @@ LIBS         =
 
 DESTDIR = ./
 TARGET  = main
+ARTIFACT = artifact.tga
 
 OBJECTS := $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 
@@ -19,5 +20,5 @@ $(OBJECTS): %.o: %.cpp
 clean:
 	-rm -f $(OBJECTS)
 	-rm -f $(TARGET)
-	-rm -f image.tga
+	-rm -f $(ARTIFACT)
 
