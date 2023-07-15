@@ -2,7 +2,6 @@
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
-#include <valarray>
 
 void drawLine(int,int,int,int,const TGAColor&,TGAImage&);
 
