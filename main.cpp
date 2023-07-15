@@ -10,18 +10,18 @@ const TGAColor green{0,255,0,255};
 
 int main() {
 
-    TGAImage image{100,100,TGAImage::RGB};
+    TGAImage image{1000,1000,TGAImage::RGB};
 
-    drawLine(0,0,100,10,green,image);
-    drawLine(0,0,20,100,green,image);
+    drawLine(0,0,1000,100,green,image);
+    drawLine(0,0,200,1000,green,image);
 
-    drawLine(0,50,100,50,red,image);
-    drawLine(50,0,50,100,red,image);
+    drawLine(0,500,1000,500,red,image);
+    drawLine(500,0,500,1000,red,image);
 
     image.set(0,0, red);
-    image.set(0,99, red);
-    image.set(99,0,red);
-    image.set(99,99, red);
+    image.set(0,999, red);
+    image.set(999,0,red);
+    image.set(999,999, red);
 
     image.flip_vertically();
     image.write_tga_file("image.tga");
@@ -29,9 +29,6 @@ int main() {
     return 0;
 }
 
-/**
- * Primitive line drawing algo
- */
 void drawLine(int x0, int y0, int x1, int y1, const TGAColor& color, TGAImage& image) {
 
     int start[2] {x0, y0};
@@ -54,7 +51,7 @@ void drawLine(int x0, int y0, int x1, int y1, const TGAColor& color, TGAImage& i
         int x = !isRotated * i + isRotated * value;
         int y = isRotated * i + !isRotated * value; 
         
-        std::cout << x << ';' << y << '\n';
+        //std::cout << x << ';' << y << '\n';
 
         image.set(x,y,color);
 
@@ -64,6 +61,6 @@ void drawLine(int x0, int y0, int x1, int y1, const TGAColor& color, TGAImage& i
             error = 0.0;
         }
 
-        std::cout << error << '\n';
+        //std::cout << error << '\n';
     }
 }
