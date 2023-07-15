@@ -11,7 +11,11 @@ int main() {
 
     TGAImage image{100,100,TGAImage::RGB};
 
-    drawLine(0,-100,100,100,green,image);
+    drawLine(0,0,100,10,green,image);
+    drawLine(0,0,20,100,green,image);
+
+    drawLine(0,50,100,50,red,image);
+    drawLine(50,0,50,100,red,image);
 
     image.set(0,0, red);
     image.set(0,99, red);
@@ -29,19 +33,19 @@ int main() {
  */
 void drawLine(int x0, int y0, int x1, int y1, const TGAColor& color, TGAImage& image) {
 
-    int rangeX {x1 - x0};
-    int rangeY {y1 - y0};
+    int ranges[2] {x1 - x0, y1 - y0};
+    int longerRange = ranges[(int)(ranges[1] > ranges[0])];
 
-    for(int xi = rangeX; xi >= 0; xi--) {
-        int x,y;
-        double progress;
+    for(int i = longerRange; i >= 0; i--) {
 
-        x = x0 + xi;
-        progress = (double)x/rangeX;
-        y = y0 + rangeY * progress;
+        int currentX,currentY;
+        float progress = (float)i/longerRange;
 
-        std::cout << x << ';' << y << '\n';
+        currentX = x0 + ranges[0] * progress;
+        currentY = y0 + ranges[1] * progress;
 
-        image.set(x,y,color);
+        std::cout << currentX << ';' << currentY << '\n';
+
+        image.set(currentX,currentY,color);
     }
 }
