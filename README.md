@@ -3,5 +3,5 @@
 ## draws lines
 ![line](./demo/demo-line.jpeg)
 
-## draw wireframes
+## draws wireframes
 ![head_wireframe](./demo/demo-wireframe.jpeg)
