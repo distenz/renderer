@@ -1,7 +1,5 @@
 #include "tgaimage.h"
-#include <cmath>
 #include <cstdlib>
-#include <iostream>
 
 #define ARTIFACT_NAME "artifact.tga"
 void drawLine(int,int,int,int,const TGAColor&,TGAImage&);
@@ -13,11 +11,12 @@ int main() {
 
     TGAImage image{100,100,TGAImage::RGB};
 
-    drawLine(0,100,100,0,green,image);
-    drawLine(0,0,100,40,green,image);
+    drawLine(0,99,99,0,green,image);
+    drawLine(0,0,99,40,green,image);
+    drawLine(25,33,99,66,green,image);
 
-    drawLine(0,50,100,50,red,image);
-    drawLine(50,0,50,100,red,image);
+    drawLine(0,50,99,50,red,image);
+    drawLine(50,0,50,99,red,image);
 
     image.set(0,0, red);
     image.set(0,99, red);
@@ -32,33 +31,40 @@ int main() {
 
 void drawLine(int x0, int y0, int x1, int y1, const TGAColor& color, TGAImage& image) {
 
-    int start[2] {x0, y0};
-    int deltas[2] {x1 - x0, y1 - y0};
 
-    bool isRotated {deltas[1] > deltas[0]};
+    bool isRotated {false};
 
-    int stepAxis = (int)isRotated;
-    int stepDelta {deltas[(int)stepAxis]};
+    if (std::abs(x0-x1)<std::abs(y0-y1)) {
+        std::swap(x0, y0);
+        std::swap(x1, y1);
+        isRotated = true;
+    }
 
-    int valueAxis = (int)(!stepAxis);
-    int valueDelta = deltas[(int)valueAxis];
+    if (x0>x1) {
+        std::swap(x0, x1);
+        std::swap(y0, y1);
+    }
+    
+    int dx {x1-x0};
+    int dy {y1-y0};
+    int dt {std::abs(dy)};
+    int error {0};
+    int y {y0};
+    bool m = y1 > y0;
 
-    float steepness = (float)valueDelta/stepDelta;
-    float error = 0;
-    int value = start[valueAxis];
+    for (int x = x0; x <= x1; x++) {
 
-    for(int i = 0; i <= stepDelta; i++) {
-
-        int x = !isRotated * i + isRotated * value;
-        int y = isRotated * i + !isRotated * value;
-        
-        image.set(x,y,color);
-
-        error += steepness;
-
-        if (-.5 > error || error > .5) {
-            value += (int)error;
-            error = 0.0;
+        error += dt;
+        if (error > dx) {
+            y += m ? 1 : -1;
+            error -= dx;
         }
+        
+        if (isRotated) {
+            image.set(y,x,color);
+        } else {
+            image.set(x,y,color);
+        }
+
     }
 }
