@@ -11,18 +11,18 @@ const TGAColor green{0,255,0,255};
 
 int main() {
 
-    TGAImage image{1000,1000,TGAImage::RGB};
+    TGAImage image{100,100,TGAImage::RGB};
 
-    drawLine(0,1000,1000,0,green,image);
-    drawLine(0,0,1000,500,green,image);
+    drawLine(0,100,100,0,green,image);
+    drawLine(0,0,100,40,green,image);
 
-    drawLine(0,500,1000,500,red,image);
-    drawLine(500,0,500,1000,red,image);
+    drawLine(0,50,100,50,red,image);
+    drawLine(50,0,50,100,red,image);
 
     image.set(0,0, red);
-    image.set(0,999, red);
-    image.set(999,0,red);
-    image.set(999,999, red);
+    image.set(0,99, red);
+    image.set(99,0,red);
+    image.set(99,99, red);
 
     image.flip_vertically();
     image.write_tga_file(ARTIFACT_NAME);
