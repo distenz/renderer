@@ -13,8 +13,8 @@ int main() {
 
     TGAImage image{1000,1000,TGAImage::RGB};
 
-    drawLine(0,0,1000,100,green,image);
-    drawLine(0,0,200,1000,green,image);
+    drawLine(0,1000,1000,0,green,image);
+    drawLine(0,0,1000,500,green,image);
 
     drawLine(0,500,1000,500,red,image);
     drawLine(500,0,500,1000,red,image);
@@ -50,13 +50,14 @@ void drawLine(int x0, int y0, int x1, int y1, const TGAColor& color, TGAImage& i
     for(int i = 0; i <= stepDelta; i++) {
 
         int x = !isRotated * i + isRotated * value;
-        int y = isRotated * i + !isRotated * value; 
+        int y = isRotated * i + !isRotated * value;
         
         image.set(x,y,color);
 
         error += steepness;
-        if (error >= 0.5) {
-            ++value;
+
+        if (-.5 > error || error > .5) {
+            value += (int)error;
             error = 0.0;
         }
     }
