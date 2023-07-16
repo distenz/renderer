@@ -1,30 +1,62 @@
+#include "geometry.h"
+#include "model.h"
 #include "tgaimage.h"
 #include <cstdlib>
+#include <iostream>
+#include <vector>
 
 #define ARTIFACT_NAME "artifact.tga"
+#define DEBUG true
+
 void drawLine(int,int,int,int,const TGAColor&,TGAImage&);
 
 const TGAColor red{255,0,0,255};
 const TGAColor green{0,255,0,255};
+const int width {800};
+const int height {800};
+
+Model* model = nullptr;
 
 int main() {
 
-    TGAImage image{100,100,TGAImage::RGB};
+    TGAImage image{width,height,TGAImage::RGB};
+    
+    model = new Model{"./obj/head.obj"};
 
-    drawLine(0,99,99,0,green,image);
-    drawLine(0,0,99,40,green,image);
-    drawLine(25,33,99,66,green,image);
+    int nFaces = model->nfaces();
 
-    drawLine(0,50,99,50,red,image);
-    drawLine(50,0,50,99,red,image);
+    for (int i=0; i < nFaces;i++) {
+        std::vector<int> face = model->face(i);
 
-    image.set(0,0, red);
-    image.set(0,99, red);
-    image.set(99,0,red);
-    image.set(99,99, red);
+#if DEBUG
+        for(int j : face)
+            std::cout << j << ' ';
+        std::cout << '\n';
+#endif
+
+        for(int k=0;k<3;k++) {
+            Vec3f v0 = model->vert(face[k]);
+            Vec3f v1 = model->vert(face[(k+1)%3]);
+
+            int x0 = (v0.x+1) * width/2;
+            int y0 = (v0.y+1) * height/2;
+            int x1 = (v1.x+1) * width/2;
+            int y1 = (v1.y+1) * height/2;
+
+#if DEBUG
+        std::cout << x0 << ';' << y0 << ' ' << x1 << ';' << y1 << '\n';
+#endif
+        
+            drawLine(x0, y0, x1, y1, green, image);
+        }
+    }
+
+    // 
 
     image.flip_vertically();
     image.write_tga_file(ARTIFACT_NAME);
+
+    delete model;
 
     return 0;
 }
