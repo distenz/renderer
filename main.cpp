@@ -101,18 +101,18 @@ int main() {
     TGAImage image{width,height,TGAImage::RGB};
 
     // 
-    line(image, red, 0, 0, width, height);
-    line(image, green, 0, height, width, 0);
+    //line(image, red, 0, 0, width, height);
+    //line(image, green, 0, height, width, 0);
     // vertical and horizontal
-    line(image, blue, 0, height/2, width, height/2);
-    line(image, blue, width/2, 0, width/2, height);
+    //line(image, blue, 0, height/2, width, height/2);
+    //line(image, blue, width/2, 0, width/2, height);
 
-    //model = new Model{"./obj/head.obj"};
-    //drawWireMesh(model, white, image);
+    model = new Model{"./obj/head.obj"};
+    drawWireMesh(model, green, image);
 
     // 
 
-    //image.flip_vertically();
+    image.flip_vertically();
     image.write_tga_file(ARTIFACT_NAME);
 
     delete model;
@@ -146,7 +146,7 @@ void drawWireMesh(Model* model,const TGAColor& color, TGAImage& image) {
             int x1 = (v1.x+1) * width/2;
             int y1 = (v1.y+1) * height/2;
 
-            drawLine(x0, y0, x1, y1, color, image);
+            line(image, color, x0, y0, x1, y1);
         }
     }
 }
