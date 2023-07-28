@@ -69,7 +69,7 @@ void line(TGAImage& image, const TGAColor& color, int x1, int y1, int x2, int y2
 
         if(x2 < x1) swapInt(&x1, &x2);
 
-        for (int x=x1; x<=x2; x++) {
+        for (int x=x1; x<x2; x++) {
             if (0 <= x && x < width) {
                 int y = dy*x/dx+c; 
                 int error = dy*(x+1)/dx+c; 
@@ -87,7 +87,7 @@ void line(TGAImage& image, const TGAColor& color, int x1, int y1, int x2, int y2
         int x = x1;
         if (0 <= x && x < width ) {
             if (y2 < y1) swapInt(&y1, &y2);
-            for (int y=y1; y<=y2; y++) {
+            for (int y=y1; y<y2; y++) {
                 if (0 <= y && y < height) {
                     image.set(x,y,color);
                 }
