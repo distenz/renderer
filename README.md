@@ -1,4 +1,4 @@
-# software renderer for learning
+# my software renderer for learning about cg
 
 ## draws lines
 ![line](./demo/demo-line.jpeg)
