@@ -1,24 +1,18 @@
 #include "geometry.h"
 #include "model.h"
 #include "tgaimage.h"
-#include <cstdio>
-#include <fstream>
-#include <iostream>
 
 #define ARTIFACT_NAME "artifact.tga"
 #define DEBUG true
 
-void drawTriangle(Vec2i p1, Vec2i p2, Vec2i p3, const TGAColor& color, TGAImage&);
-void drawFilledTriangle(Vec2i p1, Vec2i p2, Vec2i p3, const TGAColor& color, TGAImage&);
-void drawLine(int x0,int y0,int x1,int y1,const TGAColor& color,TGAImage& image);
 void drawWireMesh(Model* model,const TGAColor& color,TGAImage& image);
 
 const TGAColor white{255,255,255,255};
 const TGAColor red{255,0,0,255};
 const TGAColor green{0,255,0,255};
 const TGAColor blue{0,0,255,255};
-const int width {800};
-const int height {800};
+const int width {200};
+const int height {200};
 
 Model* model = nullptr;
 
@@ -95,20 +89,90 @@ void line(TGAImage& image, const TGAColor& color, int x1, int y1, int x2, int y2
         }
     }
 }
+void triangle(TGAImage &image, const TGAColor &color, int x0, int y0, int x1, int y1, int x2, int y2) { 
+
+//    line(image, color, x0, y0, x1, y1);
+//    line(image, color, x2, y2, x0, y0);
+//    line(image, color, x1, y1, x2, y2);
+
+    if(x0>x1) {
+        swapInt(&y0,&y1);
+        swapInt(&x0,&x1);
+    }
+    if(x1>x2) {
+        swapInt(&y1,&y2);
+        swapInt(&x1,&x2);
+    }
+    if(x0>x1) {
+        swapInt(&y0,&y1);
+        swapInt(&x0,&x1);
+    }
+
+    // A____b___C
+    //  \      /
+    //  c\    /a
+    //    \  /
+    //     \/
+    //      B
+    // A(x0,y0)
+    // B(x1,y1)
+    // C(x2,y2)
+    //
+
+    // slope and offsetf
+    // for line c
+    int cdy = y1 - y0;
+    int cdx = x1 - x0;
+    int cc = y0 - cdy * x0 / cdx;
+    // for ling b
+    int bdy = y2 - y0;
+    int bdx = x2 - x0;
+    int bc = y0 - bdy * x0 / bdx;
+    // for line a
+    int ady = y2 - y1;
+    int adx = x2 - x1;
+    int ac = y1 - ady * x1 / adx;
+    for(int x=x0; x<x2; x++) {
+        int rly1;
+        // A->C
+        // rly0
+        // y = dy/dx*x+c
+        int rly0 = bdy*x/bdx+bc;
+        if (x<x1) {
+            // A->B
+            // rly1
+            rly1 = cdy*x/cdx+cc;
+        } else {
+            // B->C
+            // rly1
+            rly1 = ady*x/adx+ac;
+        }
+        
+        line(image, color, x, rly0, x, rly1);
+    }
+}
 
 int main() {
 
     TGAImage image{width,height,TGAImage::RGB};
 
     // 
-    //line(image, red, 0, 0, width, height);
-    //line(image, green, 0, height, width, 0);
-    // vertical and horizontal
-    //line(image, blue, 0, height/2, width, height/2);
-    //line(image, blue, width/2, 0, width/2, height);
+//    line(image, red, 0, 0, width, height);
+//    line(image, green, 0, height, width, 0);
+//    // vertical and horizontal
+//    line(image, blue, 0, height/2, width, height/2);
+//    line(image, blue, width/2, 0, width/2, height);
 
-    model = new Model{"./obj/head.obj"};
-    drawWireMesh(model, green, image);
+//    model = new Model{"./obj/head.obj"};
+//    drawWireMesh(model, green, image);
+
+    
+    Vec2i t0[3] = {Vec2i(10, 70),   Vec2i(50, 160),  Vec2i(70, 80)}; 
+    Vec2i t1[3] = {Vec2i(180, 50),  Vec2i(150, 1),   Vec2i(70, 180)}; 
+    Vec2i t2[3] = {Vec2i(180, 150), Vec2i(120, 160), Vec2i(130, 180)}; 
+    triangle(image, red, t0[0].x, t0[0].y, t0[1].x, t0[1].y, t0[2].x, t0[2].y); 
+    triangle(image, white, t1[0].x, t1[0].y, t1[1].x, t1[1].y, t1[2].x, t1[2].y); 
+    triangle(image, green, t2[0].x, t2[0].y, t2[1].x, t2[1].y, t2[2].x, t2[2].y); 
 
     // 
 
@@ -118,15 +182,6 @@ int main() {
     delete model;
 
     return 0;
-}
-
-void drawFilledTriangle(Vec2i p1, Vec2i p2, Vec2i p3, const TGAColor& color, TGAImage& image) {}
-
-void drawTriangle(Vec2i p1, Vec2i p2, Vec2i p3, const TGAColor& color, TGAImage& image) {
-
-    drawLine(p1.x, p1.y, p2.x, p2.y, color, image);
-    drawLine(p2.x, p2.y, p3.x, p3.y, color, image);
-    drawLine(p1.x, p1.y, p3.x, p3.y, color, image);
 }
 
 void drawWireMesh(Model* model,const TGAColor& color, TGAImage& image) {
@@ -151,42 +206,3 @@ void drawWireMesh(Model* model,const TGAColor& color, TGAImage& image) {
     }
 }
 
-void drawLine(int x0, int y0, int x1, int y1, const TGAColor& color, TGAImage& image) {
-
-
-    bool isRotated {false};
-
-    if (std::abs(x0-x1)<std::abs(y0-y1)) {
-        std::swap(x0, y0);
-        std::swap(x1, y1);
-        isRotated = true;
-    }
-
-    if (x0>x1) {
-        std::swap(x0, x1);
-        std::swap(y0, y1);
-    }
-    
-    int dx {x1-x0};
-    int dy {y1-y0};
-    int dt {std::abs(dy)};
-    int error {0};
-    int y {y0};
-    bool m = y1 > y0;
-
-    for (int x = x0; x <= x1; x++) {
-
-        error += dt;
-        if (error > dx) {
-            y += m ? 1 : -1;
-            error -= dx;
-        }
-        
-        if (isRotated) {
-            image.set(y,x,color);
-        } else {
-            image.set(x,y,color);
-        }
-
-    }
-}
