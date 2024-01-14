@@ -6,6 +6,7 @@
 #define ARTIFACT_NAME "artifact.tga"
 #define DEBUG true
 
+
 void mesh(Model* model,const TGAColor& color,TGAImage& image);
 
 const TGAColor white{255,255,255,255};
@@ -90,7 +91,7 @@ void line(TGAImage& image, const TGAColor& color, int x1, int y1, int x2, int y2
         }
     }
 }
-void triangle(TGAImage &image, const TGAColor &color, int x0, int y0, int x1, int y1, int x2, int y2) { 
+void triangle(TGAImage &image, const TGAColor &color, int x0, int y0, int x1, int y1, int x2, int y2) {
 
 //    line(image, color, x0, y0, x1, y1);
 //    line(image, color, x2, y2, x0, y0);
@@ -153,13 +154,13 @@ void triangle(TGAImage &image, const TGAColor &color, int x0, int y0, int x1, in
     }
 }
 
-Vec3f barycentric(const Vec2i *pts, const Vec2i P) { 
+Vec3f barycentric(const Vec2i *pts, const Vec2i P) {
     Vec3f u = Vec3f(pts[2].x -pts[0].x, pts[1].x-pts[0].x, pts[0].x-P.x)^Vec3f(pts[2].y-pts[0].y, pts[1].y-pts[0].y, pts[0].y-P.y);
     if (std::abs(u.z)<1) return Vec3f(-1,1,1);
     return Vec3f(1.-(u.x+u.y)/u.z, u.y/u.z, u.x/u.z); 
 } 
 
-void triangle2(TGAImage &image, const TGAColor &color, const Vec2i *pts) { 
+void triangle2(TGAImage &image, const TGAColor &color, const Vec2i *pts) {
     Vec2i boundingBoxMin(image.get_width()-1, image.get_height()-1),
           boundingBoxMax(0,0),
           imageBoundary(image.get_width()-1, image.get_width()-1);
@@ -179,42 +180,6 @@ void triangle2(TGAImage &image, const TGAColor &color, const Vec2i *pts) {
             image.set(iter.x,iter.y, color);
         }
     }
-}
-
-int main() {
-
-    TGAImage image{width,height,TGAImage::RGB};
-
-    // 
-//    line(image, red, 0, 0, width, height);
-//    line(image, green, 0, height, width, 0);
-//    // vertical and horizontal
-//    line(image, blue, 0, height/2, width, height/2);
-//    line(image, blue, width/2, 0, width/2, height);
-
-    model = new Model{"./obj/head.obj"};
-    mesh(model, green, image);
-
-    
-//    Vec2i t0[3] = {Vec2i(10, 70),   Vec2i(50, 160),  Vec2i(70, 80)}; 
-//    Vec2i t1[3] = {Vec2i(180, 50),  Vec2i(150, 1),   Vec2i(70, 180)}; 
-//    Vec2i t2[3] = {Vec2i(180, 150), Vec2i(120, 160), Vec2i(130, 180)}; 
-//    triangle(image, red, t0[0].x, t0[0].y, t0[1].x, t0[1].y, t0[2].x, t0[2].y); 
-//    triangle(image, white, t1[0].x, t1[0].y, t1[1].x, t1[1].y, t1[2].x, t1[2].y); 
-//    triangle(image, green, t2[0].x, t2[0].y, t2[1].x, t2[1].y, t2[2].x, t2[2].y); 
-
-//    triangle2(image, red, t0);
-//    triangle2(image, white, t1);
-//    triangle2(image, green, t2);
-
-    // 
-
-    image.flip_vertically();
-    image.write_tga_file(ARTIFACT_NAME);
-
-    delete model;
-
-    return 0;
 }
 
 void mesh(Model* model,const TGAColor& color, TGAImage& image) {
@@ -249,4 +214,56 @@ void mesh(Model* model,const TGAColor& color, TGAImage& image) {
         }
     }
 }
+
+void exampleLines(TGAImage&image) {
+
+    line(image, red, 0, 0, width, height);
+    line(image, green, 0, height, width, 0);
+    // vertical and horizontal
+    line(image, blue, 0, height/2, width, height/2);
+    line(image, blue, width/2, 0, width/2, height);
+}
+
+void exampleRaster(TGAImage& image) {
+    Vec2i t0[3] = {Vec2i(10, 70),   Vec2i(50, 160),  Vec2i(70, 80)}; 
+    Vec2i t1[3] = {Vec2i(180, 50),  Vec2i(150, 1),   Vec2i(70, 180)}; 
+    Vec2i t2[3] = {Vec2i(180, 150), Vec2i(120, 160), Vec2i(130, 180)}; 
+
+    triangle2(image, red, t0);
+    triangle2(image, white, t1);
+    triangle2(image, green, t2);
+}
+
+enum Examples {
+    LINES = 0,
+    RASTER = 1,
+    MESH = 2,
+};
+
+int main(int argc, char* argv[]) {
+
+    long eg = (long)argv[2];
+    TGAImage image{width,height,TGAImage::RGB};
+
+    switch (eg) {
+        case LINES:
+            exampleLines(image);
+            break;
+        case RASTER:
+            exampleRaster(image);
+            break;
+        case MESH:
+        default:
+            model = new Model{"./obj/head.obj"};
+            mesh(model, green, image);
+    }
+
+    image.flip_vertically();
+    image.write_tga_file(ARTIFACT_NAME);
+
+    delete model;
+
+    return 0;
+}
+
 
