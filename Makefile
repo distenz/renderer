@@ -1,13 +1,13 @@
 SYSCONF_LINK = clang++
-CPPFLAGS     = -ggdb
+CPPFLAGS     = -ggdb -std=c++17
 LDFLAGS      =
 LIBS         =
 
-DESTDIR = ./
+DESTDIR = ./build/
 TARGET  = main
 ARTIFACT = artifact.tga
 
-OBJECTS := $(patsubst %.cpp,%.o,$(wildcard *.cpp))
+OBJECTS := $(patsubst %.cpp,%.o,$(wildcard src/*.cpp) $(wildcard include/*.cpp) $(wildcard example/*.cpp))
 
 all: $(DESTDIR)$(TARGET)
 

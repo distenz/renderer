@@ -1,4 +1,4 @@
 *.o
 artifact.tga
 
-main
+build/*
