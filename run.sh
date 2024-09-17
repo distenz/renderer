@@ -1,3 +1,3 @@
 #/bin/sh
 
-make clean && make && ./main && (eog ./artifact.tga &)
+make clean && make && ./build/main && (imv ./artifact.tga &)
